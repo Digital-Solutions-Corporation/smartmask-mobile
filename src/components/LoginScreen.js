@@ -1,31 +1,18 @@
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { ERROR_CODE, readUser, UserException } from './controllers/UserController';
-import InputField from './InputField';
+import { Alert, StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-native';
+import { readUser } from './controllers/UserController';
 import Logo from './Logo';
 import { validateEmail } from './utils/Masks';
 
 export default function LoginScreen({ navigation }) {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [emailError, setEmailError] = useState("");
-	const [passwordError, setPasswordError] = useState("");
-
-	const onEmailChanged = (val) => {
-		if (validateEmail(val)) {
-			setEmailError("");
-		} else {
-			setEmailError("Formato inválido");
-		}
-		setEmail(val);
-	}
-
-	const onPasswordChanged = (val) => {
-		setPassword(val);
-	}
 
 	const onLogin = async() => {
-		if (emailError !== "") return;
+		if (!validateEmail(email)) {
+			Alert.alert("Erro no login", "Email inválido");
+			return;
+		}
 		try {
 			const user = await readUser(email.trim(), password);
 			navigation.reset({
@@ -33,15 +20,7 @@ export default function LoginScreen({ navigation }) {
 				routes: [{name: "Welcome", params: {user}}]
 			});
 		} catch (e) {
-			if (e instanceof UserException) {
-				if (e.code == ERROR_CODE.USER) {
-					setEmailError(e.message);
-				} else if (e.code == ERROR_CODE.PASSWORD) {
-					setPasswordError(e.message);
-				}
-			} else {
-				Alert.alert("Erro no login", e.message);
-			}
+			Alert.alert("Erro no login", e.message);
 		}
 	}
 
@@ -52,18 +31,18 @@ export default function LoginScreen({ navigation }) {
 	return (
 		<View style={styles.container}>
 			<Logo />
-			<InputField
+			<TextInput
 				placeholder="email"
 				value={email}
-				error={emailError}
-				onChangeText={onEmailChanged}
+				onChangeText={val => setEmail(val)}
+				style={styles.inputField}
 			/>
-			<InputField
+			<TextInput
 				placeholder="senha"
 				value={password}
-				error={passwordError}
-				onChangeText={onPasswordChanged}
+				onChangeText={val => setPassword(val)}
 				secureTextEntry={true}
+				style={styles.inputField}
 			/>
 
 			<View style={{height: 32}}/>
@@ -91,6 +70,13 @@ const styles = StyleSheet.create({
 		paddingVertical: 64,
 		paddingHorizontal: 64,
 	},
+	inputField: {
+		borderBottomWidth: 2,
+		paddingBottom: 0,
+		paddingHorizontal: 8,
+		borderColor: "rgba(20, 33, 61, 0.5)",
+		marginBottom: 16,
+	},
 	button: {
 		alignSelf: 'center',
 		backgroundColor: '#14213D',
@@ -103,6 +89,5 @@ const styles = StyleSheet.create({
 		color: 'white'
 	}
 });
-
 
 

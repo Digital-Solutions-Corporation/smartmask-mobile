@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View, TextInput } from "react-native";
 import { createUser, ERROR_CODE, UserException } from "./controllers/UserController";
-import InputField from "./InputField";
 import Logo from "./Logo";
 import { validateEmail } from "./utils/Masks";
 
@@ -10,37 +9,24 @@ export default function RegisterScreen({navigation}) {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [passwordConfirmation, setPasswordConfirmation] = useState("");
-	const [emailError, setEmailError] = useState("");
-	const [passwordError, setPasswordError] = useState("");
-
-	const onNameChanged = (val) => {
-		setName(val);
-	}
-
-	const onEmailChanged = (val) => {
-		if (validateEmail(val)) {
-			setEmailError("");
-		} else {
-			setEmailError("Formato inválido");
-		}
-		setEmail(val);
-	}
-
-	const onPasswordChanged = (val) => {
-		setPassword(val);
-	}
-
-	const onPasswordConfirmationChanged = (val) => {
-		if (val === password) {
-			setPasswordError("");
-		} else {
-			setPasswordError("Senhas não conferem");
-		}
-		setPasswordConfirmation(val);
-	}
 
 	const onRegister = async() => {
-		if (emailError !== "" || passwordError !== "") return;
+		if (name === "") {
+			Alert.alert("Erro no cadastro", "Nome não pode ser vazio");
+			return;
+		}
+		if (!validateEmail(email)) {
+			Alert.alert("Erro no cadastro", "Email inválido");
+			return;
+		}
+		if (password === "") {
+			Alert.alert("Erro no cadastro", "Senha não pode ser vazio");
+			return;
+		}
+		if (password !== passwordConfirmation) {
+			Alert.alert("Erro no cadastro", "Senhas não conferem");
+			return;
+		}
 		
 		try {
 			const user = await createUser(name, email.trim(), password);
@@ -49,13 +35,7 @@ export default function RegisterScreen({navigation}) {
 				routes: [{name: "Welcome", params: {user}}]
 			});
 		} catch (e) {
-			if (e instanceof UserException) {
-				if (e.code == ERROR_CODE.EMAIL) {
-					setEmailError(e.message);
-				}
-			} else {
-				Alert.alert("Erro no login", e.message);
-			}
+			Alert.alert("Erro no cadastro", e.message);
 		}
 	}
 
@@ -66,29 +46,31 @@ export default function RegisterScreen({navigation}) {
 	return (
 		<View style={styles.container}>
 			<Logo />
-			<InputField
+			<TextInput
 				placeholder="nome"
 				value={name}
-				onChangeText={onNameChanged}
+				onChangeText={val => setName(val)}
+				style={styles.inputField}
 			/>
-			<InputField
+			<TextInput
 				placeholder="email"
 				value={email}
-				error={emailError}
-				onChangeText={onEmailChanged}
+				onChangeText={val => setEmail(val)}
+				style={styles.inputField}
 			/>
-			<InputField
+			<TextInput
 				placeholder="senha"
 				value={password}
-				onChangeText={onPasswordChanged}
+				onChangeText={val => setPassword(val)}
 				secureTextEntry={true}
+				style={styles.inputField}
 			/>
-			<InputField
+			<TextInput
 				placeholder="confirme sua senha"
 				value={passwordConfirmation}
-				error={passwordError}
-				onChangeText={onPasswordConfirmationChanged}
+				onChangeText={val => setPasswordConfirmation(val)}
 				secureTextEntry={true}
+				style={styles.inputField}
 			/>
 
 			<View style={{height: 32}}/>
@@ -117,6 +99,13 @@ const styles = StyleSheet.create({
 		alignItems: 'stretch',
 		paddingVertical: 64,
 		paddingHorizontal: 64,
+	},
+	inputField: {
+		borderBottomWidth: 2,
+		paddingBottom: 0,
+		paddingHorizontal: 8,
+		borderColor: "rgba(20, 33, 61, 0.5)",
+		marginBottom: 16,
 	},
 	button: {
 		alignSelf: 'center',
