@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-native';
-import { readUser } from './controllers/UserController';
 import Logo from './Logo';
+import { getUser } from './utils/Api';
 import { validateEmail } from './utils/Masks';
 
 export default function LoginScreen({ navigation }) {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
-	const onLogin = async() => {
+	const onLogin = async () => {
 		if (!validateEmail(email)) {
 			Alert.alert("Erro no login", "Email inválido");
 			return;
 		}
 		try {
-			const user = await readUser(email.trim(), password);
+			const user = await getUser(email, password);
 			navigation.reset({
 				index: 0,
-				routes: [{name: "Welcome", params: {user}}]
+				routes: [{ name: "Welcome", params: { user } }]
 			});
 		} catch (e) {
 			Alert.alert("Erro no login", e.message);
@@ -45,8 +45,8 @@ export default function LoginScreen({ navigation }) {
 				style={styles.inputField}
 			/>
 
-			<View style={{height: 32}}/>
-			
+			<View style={{ height: 32 }} />
+
 			<TouchableOpacity
 				style={styles.button}
 				onPress={() => onLogin()}

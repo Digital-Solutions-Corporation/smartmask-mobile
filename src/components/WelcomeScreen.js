@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function WelcomeScreen({route, navigation}) {
 	const {user} = route.params;
-	const firstName = user.name.split(" ")[0];
+	const firstName = user.nome.split(" ")[0];
 
 	const onEditProfile = () => {
 		navigation.navigate("EditProfile", {user});

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { updateUser } from './controllers/UserController';
+import { deleteUser, updateUser } from './utils/Api';
 import { validateEmail } from './utils/Masks';
 
 
@@ -11,7 +11,7 @@ import { validateEmail } from './utils/Masks';
 export default function EditProfile({ route, navigation }) {
 	const { user } = route.params;
 
-	const [userName, setUserName] = useState(user.name);
+	const [userName, setUserName] = useState(user.nome);
 	const [userEmail, setUserEmail] = useState(user.email);
 	//const [userAge, setUserAge] = useState(user.age);
 
@@ -26,14 +26,28 @@ export default function EditProfile({ route, navigation }) {
 		try {
 			let newUser = {
 				...user,
-				name: userName,
+				nome: userName,
 				email: userEmail
 			};
-			updateUser(user.email, user.password, newUser);
+			const a = await updateUser(newUser);
 			navigation.reset({
 				index: 0,
 				routes: [{ name: "Welcome", params: { user: newUser } }]
 			});
+		} catch (e) {
+			Alert.alert("Erro ao editar perfil", e.message);
+		}
+	}
+
+	const onDelete = async () => {
+		try {
+			const status = await deleteUser(user.id);
+			if (status === 200) {
+				navigation.reset({
+					index: 0,
+					routes: [{ name: "Login" }]
+				});
+			}
 		} catch (e) {
 			Alert.alert("Erro ao editar perfil", e.message);
 		}
@@ -60,6 +74,12 @@ export default function EditProfile({ route, navigation }) {
 				onPress={() => onSave()}
 			>
 				<Text style={styles.saveBtnTxt}>Salvar</Text>
+			</TouchableOpacity>
+			<TouchableOpacity
+				style={styles.deleteBtn}
+				onPress={() => onDelete()}
+			>
+				<Text style={styles.deleteBtnTxt}>Deletar Perfil</Text>
 			</TouchableOpacity>
 		</View>
 	);
@@ -91,6 +111,17 @@ const styles = StyleSheet.create({
 		alignSelf: 'center'
 	},
 	saveBtnTxt: {
+		color: 'white',
+	},
+	deleteBtn: {
+		backgroundColor: '#fc033d',
+		paddingHorizontal: 32,
+		paddingVertical: 8,
+		marginBottom: 16,
+		borderRadius: 3333,
+		alignSelf: 'center'
+	},
+	deleteBtnTxt: {
 		color: 'white',
 	}
 })

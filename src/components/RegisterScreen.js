@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View, TextInput } from "react-native";
-import { createUser, ERROR_CODE, UserException } from "./controllers/UserController";
+import { Alert, StyleSheet, Text, TouchableOpacity, View, TextInput, KeyboardAvoidingView } from "react-native";
 import Logo from "./Logo";
+import { createUser } from "./utils/Api";
 import { validateEmail } from "./utils/Masks";
 
 export default function RegisterScreen({navigation}) {
@@ -29,7 +29,7 @@ export default function RegisterScreen({navigation}) {
 		}
 		
 		try {
-			const user = await createUser(name, email.trim(), password);
+			const user = await createUser({name, email: email.trim(), password});
 			navigation.reset({
 				index: 0,
 				routes: [{name: "Welcome", params: {user}}]
@@ -44,7 +44,10 @@ export default function RegisterScreen({navigation}) {
 	}
 
 	return (
-		<View style={styles.container}>
+		<View
+			style={styles.container}
+			behavior="padding"
+		>
 			<Logo />
 			<TextInput
 				placeholder="nome"
@@ -99,6 +102,7 @@ const styles = StyleSheet.create({
 		alignItems: 'stretch',
 		paddingVertical: 64,
 		paddingHorizontal: 64,
+		//overflow: 'scroll',
 	},
 	inputField: {
 		borderBottomWidth: 2,
