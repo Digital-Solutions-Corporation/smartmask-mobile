@@ -16,7 +16,7 @@ export default function Navigation() {
 			<Stack.Navigator
 				initialRouteName="Login"
 				screenOptions={{
-				  //headerShown:false
+				  headerShown:false
 				}}
 			>
 				<Stack.Screen

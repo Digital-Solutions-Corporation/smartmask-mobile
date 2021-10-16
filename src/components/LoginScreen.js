@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-native';
+import {
+	Alert, ScrollView, StyleSheet, Text,
+	TextInput, TouchableOpacity, View
+} from 'react-native';
 import Logo from './Logo';
 import { getUser } from './utils/Api';
 import { validateEmail } from './utils/Masks';
@@ -29,7 +32,14 @@ export default function LoginScreen({ navigation }) {
 	}
 
 	return (
-		<View style={styles.container}>
+		<ScrollView
+			style={styles.container}
+			contentContainerStyle={{
+				alignItems: 'stretch',
+				paddingVertical: 0,
+				paddingHorizontal: 32,
+			}}
+		>
 			<Logo />
 			<TextInput
 				placeholder="email"
@@ -59,16 +69,13 @@ export default function LoginScreen({ navigation }) {
 			>
 				<Text style={styles.buttonText}>Não tenho uma conta</Text>
 			</TouchableOpacity>
-		</View>
+		</ScrollView>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		alignItems: 'stretch',
-		paddingVertical: 64,
-		paddingHorizontal: 64,
 	},
 	inputField: {
 		borderBottomWidth: 2,

@@ -1,16 +1,19 @@
 import React, { useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View, TextInput, KeyboardAvoidingView } from "react-native";
+import {
+	Alert, ScrollView, StyleSheet, Text,
+	TextInput, TouchableOpacity, View
+} from "react-native";
 import Logo from "./Logo";
 import { createUser } from "./utils/Api";
 import { validateEmail } from "./utils/Masks";
 
-export default function RegisterScreen({navigation}) {
+export default function RegisterScreen({ navigation }) {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
-	const onRegister = async() => {
+	const onRegister = async () => {
 		if (name === "") {
 			Alert.alert("Erro no cadastro", "Nome não pode ser vazio");
 			return;
@@ -27,12 +30,12 @@ export default function RegisterScreen({navigation}) {
 			Alert.alert("Erro no cadastro", "Senhas não conferem");
 			return;
 		}
-		
+
 		try {
-			const user = await createUser({name, email: email.trim(), password});
+			const user = await createUser({ name, email: email.trim(), password });
 			navigation.reset({
 				index: 0,
-				routes: [{name: "Welcome", params: {user}}]
+				routes: [{ name: "Welcome", params: { user } }]
 			});
 		} catch (e) {
 			Alert.alert("Erro no cadastro", e.message);
@@ -44,9 +47,13 @@ export default function RegisterScreen({navigation}) {
 	}
 
 	return (
-		<View
+		<ScrollView
 			style={styles.container}
-			behavior="padding"
+			contentContainerStyle={{
+				alignItems: 'stretch',
+				paddingVertical: 0,
+				paddingHorizontal: 32,
+			}}
 		>
 			<Logo />
 			<TextInput
@@ -76,7 +83,7 @@ export default function RegisterScreen({navigation}) {
 				style={styles.inputField}
 			/>
 
-			<View style={{height: 32}}/>
+			<View style={{ height: 32 }} />
 
 			<TouchableOpacity
 				style={styles.button}
@@ -90,7 +97,8 @@ export default function RegisterScreen({navigation}) {
 			>
 				<Text style={styles.buttonText}>Já tenho uma conta</Text>
 			</TouchableOpacity>
-		</View>
+
+		</ScrollView>
 	)
 }
 
@@ -99,10 +107,6 @@ export default function RegisterScreen({navigation}) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		alignItems: 'stretch',
-		paddingVertical: 64,
-		paddingHorizontal: 64,
-		//overflow: 'scroll',
 	},
 	inputField: {
 		borderBottomWidth: 2,
