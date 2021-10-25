@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { deleteUser, updateUser } from './utils/Api';
 import { validateEmail } from './utils/Masks';
 
@@ -54,7 +54,14 @@ export default function EditProfile({ route, navigation }) {
 	}
 
 	return (
-		<View style={styles.container}>
+		<ScrollView
+			style={styles.container}
+			contentContainerStyle={{
+				alignItems: 'stretch',
+				paddingVertical: 32,
+				paddingHorizontal: 32,
+			}}
+		>
 			<Text style={styles.inputName}>Nome </Text>
 			<TextInput
 				placeholder="nome"
@@ -81,16 +88,14 @@ export default function EditProfile({ route, navigation }) {
 			>
 				<Text style={styles.deleteBtnTxt}>Deletar Perfil</Text>
 			</TouchableOpacity>
-		</View>
+		</ScrollView>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		alignItems: 'stretch',
-		paddingVertical: 32,
-		paddingHorizontal: 32,
+		
 	},
 	inputName: {
 		color: "rgba(20, 33, 61, 0.5)"
