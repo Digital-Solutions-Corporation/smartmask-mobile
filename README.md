@@ -1,1 +1,0 @@
-# smartmask-mobile
