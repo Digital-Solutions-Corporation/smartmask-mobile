@@ -10,5 +10,7 @@ npm-debug.*
 *.orig.*
 web-build/
 
+*.mp4
+
 # macOS
 .DS_Store
